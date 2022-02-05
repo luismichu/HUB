@@ -4,47 +4,55 @@ from PIL import Image
 import threading
 import os
 
+# Used in IconStray class, and executes a function when clicked
 # Can have submenus
 class SuperMenuItem(MenuItemStray):
-	def __init__(self, name, my_submenu = None, function = None, state = True, radio = False):
+	global position
+	position = {}
+
+	def __init__(self, name, ident, my_submenu = None, pos = None, function = None, state = False, radio = False):
+		global position
 		self.name = name
+		self.ident = ident
+		position.update({ident:0})
 		if my_submenu == None:
-			self.function = function
+			self.function = self.set_state
+			self.my_function = function
 		else:
 			self.function = pystray.Menu(*list(my_submenu))
-		self.state = state
+		self.my_state = state
 		self.my_radio = radio
+		self.pos = pos
 
-		super().__init__(self.name, self.function, checked = lambda item: self.state, radio = self.my_radio)
+		super().__init__(self.name, self.function, checked = self.get_state(), radio = self.my_radio)
 
-	def set_state(self, state = True):
-		self.state = state
-		print(super().submenu)
-		for item in super().submenu().items():
-			item.state = False
-		print(self.state)
+	def set_state(self):
+		global position
+		position[self.ident] = self.pos
+		self.my_state = True
+		self.my_function()
+
+	def get_state(self):
+		def inner(item):
+			return position[self.ident] == self.pos
+		return inner
+		
 
 # Used in IconStray class, and executes a function when clicked
 class MenuItem(SuperMenuItem):
-	def __init__(self, name, function, state = False):
+	def __init__(self, name, function):
 		self.name = name
-		self.state = state
 		self.function = function
 
-		super().__init__(self.name, function = self.on_clicked, state = self.state, radio = True)
+		super().__init__(self.name, -1,function = self.function, state = False, radio = False)
 
-	def on_clicked(self):
-		#icon.notify('Hello World!')
-		#self.state = self.function()
-		super().set_state(False)
-
-# Uses a tuple of MenuItems and runs in a different thread from main
+# Uses a tuple of MenuItems and runs in a different thread from main if necessary
 class IconStray:
 	def __init__(self, menu, title = 'default'):
 		self.menu = menu + (pystray.Menu.SEPARATOR, MenuItem('Exit', self.icon_stop))
 		self.title = title
 		icon_name = 'package/data/icon2.png'
-		if not os.path.exists(icon_name): raise FileNotFoundError('[EXCEPTION] The file icon.png is missing in ' + os.getcwd())
+		if not os.path.exists(icon_name): raise FileNotFoundError('[EXCEPTION] The icon file is missing in ' + os.getcwd() + icon_name)
 		self.image = Image.open(icon_name)
 		self.icon = pystray.Icon(self.title, self.image, self.title, self.menu)
 

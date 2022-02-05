@@ -98,11 +98,15 @@ def main():
 		log.log('Initializing icon stray...')
 
 		menu = tuple()
+		i = 0
 		for project, project_class in project_class_dict.items():
-			menu += (icon_stray.SuperMenuItem(project, (icon_stray.MenuItem('Running', project_class.run, True), 
-													icon_stray.MenuItem('Paused', project_class.pause),
-													icon_stray.MenuItem('Stopped', project_class.stop))),)
-			project_class.run()
+			menu += (icon_stray.SuperMenuItem(project, i, (icon_stray.SuperMenuItem('Running', i, pos = 0, function = project_class.run, state = True, radio = True), 
+													icon_stray.SuperMenuItem('Paused', i, pos = 1, function = project_class.pause, radio = True),
+													icon_stray.SuperMenuItem('Stopped', i, pos = 2, function = project_class.stop, radio = True)), pos = 0, state = True),)
+			# Starting apps
+			project_class.start()
+
+			i += 1
 
 		stray = icon_stray.IconStray(menu, 'App Hub')
 
@@ -110,9 +114,8 @@ def main():
 
 		stray.run_no_threaded()
 
+		log.log('Exiting app...')
 
-
-		stray.notify()
 
 	except FileNotFoundError as fnfe:
 		log.error('The file or directory does not exist. Exiting...\n{0}'.format(fnfe))
