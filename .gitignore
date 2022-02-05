@@ -1,7 +1,7 @@
-# Project specific
-clean.py
-test.py
-LOG*.txt
+# Project specific files
+logs/
+trash/
+settings.file
 
 
 # Byte-compiled / optimized / DLL files

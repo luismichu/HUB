@@ -42,7 +42,7 @@ def check_projects(project_names):
 def main():
 	try:
 		# Initializing logs file
-		log.log_name = os.getcwd() + '/Log' + log.get_date() + '.txt'
+		log.log_name = os.getcwd() + '/logs/Log' + log.get_date() + '.txt'
 
 		log.log('Initializing HUB...')
 
