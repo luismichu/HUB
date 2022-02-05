@@ -4,7 +4,7 @@ import os, sys, imp
 
 # Variables
 work_dir = 'C:/MyApps'
-expected_class = 'HubRun'
+expected_class = 'HubApp'
 
 def check_projects(project_names):
 	project_class_dict = dict()
@@ -82,7 +82,7 @@ def main():
 		if os.path.exists(work_dir) and os.path.isdir(work_dir):
 			project_names = next(os.walk(work_dir))[1]
 		else:
-			raise FileNotFoundError
+			raise FileNotFoundError(work_dir + ' does not exist')
 
 		project_class_dict = check_projects(project_names)
 		project_names = list(project_class_dict.keys())
