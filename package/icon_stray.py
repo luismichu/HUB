@@ -43,7 +43,7 @@ class IconStray:
 	def __init__(self, menu, title = 'default'):
 		self.menu = menu + (pystray.Menu.SEPARATOR, MenuItem('Exit', self.icon_stop))
 		self.title = title
-		icon_name = 'icon2.png'
+		icon_name = 'package/data/icon2.png'
 		if not os.path.exists(icon_name): raise FileNotFoundError('[EXCEPTION] The file icon.png is missing in ' + os.getcwd())
 		self.image = Image.open(icon_name)
 		self.icon = pystray.Icon(self.title, self.image, self.title, self.menu)

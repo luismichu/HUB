@@ -1,4 +1,5 @@
-import log, icon_stray, os, sys, imp
+from package import log, icon_stray
+import os, sys, imp
 
 # Variables
 work_dir = 'C:/MyApps'
