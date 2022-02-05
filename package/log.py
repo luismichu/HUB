@@ -1,4 +1,5 @@
 from time import localtime, strftime
+import colors
 
 log_name = ''
 
@@ -21,7 +22,7 @@ def log(*text, priority = 'Log'):
 		log_file.write(to_write + '\n')
 
 def warning(*text):
-	log(text, priority = 'Warning')
+	log(text, priority = colors.yellow('Warning'))
 
 def error(*text):
-	log(text, priority = 'ERROR')
+	log(text, priority = colors.red('ERROR'))

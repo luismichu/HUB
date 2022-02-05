@@ -1,0 +1,8 @@
+<settings>
+	<url>https://erp.innovery.net/index.php?action=Login&#38;module=Users&#38;login_language=es_es</url>
+	<verbose>0</verbose>
+	<user>test</user>
+	<password>asd</password>
+	<timeout>30</timeout>
+	<randTime>False</randTime>
+</settings>

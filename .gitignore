@@ -1,7 +1,7 @@
 # Project specific files
 logs/
 trash/
-settings.file
+settings.xml
 
 
 # Byte-compiled / optimized / DLL files

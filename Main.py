@@ -1,4 +1,5 @@
 from package import log, icon_stray
+from package.settings import Settings
 import os, sys, imp
 
 # Variables
@@ -39,12 +40,43 @@ def check_projects(project_names):
 
 	return project_class_dict
 
+def load_settings(default = False):
+	try:
+		my_settings = Settings(default = default)
+		return my_settings.get_settings_dict()
+
+	except FileNotFoundError as fnfe:
+		log.warning('Could not find settings file:', fnfe)
+		
+		return False
+
+	except Settings.parse_exception as exe:
+		log.warning('Settings file is empty or not valid')
+
+		return False
+
+
 def main():
 	try:
-		# Initializing logs file
-		log.log_name = os.getcwd() + '/logs/Log' + log.get_date() + '.txt'
+		# Initializing logs folder
+		log_path = os.getcwd() + '/logs/'
+		if not os.path.exists(log_path):
+			os.mkdir(log_path)
+
+		log.log_name = log_path + 'Log' + log.get_date() + '.txt'
 
 		log.log('Initializing HUB...')
+
+		log.log('Reading settings...')
+		settings = load_settings()
+
+		if settings is False:
+			log.log('Trying default settings...')
+			settings = load_settings(default = True)
+			if settings is False:
+				raise Exception('no suitable settings file. Please create one')
+
+		log.log('Settings loaded')
 
 		log.log('Initializing apps...')
 		if os.path.exists(work_dir) and os.path.isdir(work_dir):
@@ -61,7 +93,7 @@ def main():
 			log.log('Loaded 1 app:', project_names[0])
 		else:
 			log.log('Loaded', str(len(project_names)), 'apps:')
-			[print(project) for project in project_names]
+			[print('APP #' + str(i + 1) + ': ' + project_names[i]) for i in range(len(project_names))]
 
 		log.log('Initializing icon stray...')
 
