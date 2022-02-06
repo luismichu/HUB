@@ -14,7 +14,6 @@ class SuperMenuItem(MenuItemStray):
 		global position
 		self.name = name
 		self.ident = ident
-		position.update({ident:0})
 		if my_submenu == None:
 			self.function = self.set_state
 			self.my_function = function
@@ -23,6 +22,10 @@ class SuperMenuItem(MenuItemStray):
 		self.my_state = state
 		self.my_radio = radio
 		self.pos = pos
+		if self.my_state == True:
+			position.update({ident:pos})
+		elif ident not in position:
+			position.update({ident:-1})
 
 		super().__init__(self.name, self.function, checked = self.get_state(), radio = self.my_radio)
 
@@ -44,7 +47,7 @@ class MenuItem(SuperMenuItem):
 		self.name = name
 		self.function = function
 
-		super().__init__(self.name, -1,function = self.function, state = False, radio = False)
+		super().__init__(self.name, -1, function = self.function, state = False, radio = False)
 
 # Uses a tuple of MenuItems and runs in a different thread from main if necessary
 class IconStray:

@@ -65,18 +65,19 @@ def main():
 
 		log.log_name = log_path + 'Log' + log.get_date() + '.txt'
 
-		log.log('Initializing HUB...')
-
-		log.log('Reading settings...')
 		settings = load_settings()
 
 		if settings is False:
-			log.log('Trying default settings...')
+			log.warning('Trying default settings...')
 			settings = load_settings(default = True)
 			if settings is False:
 				raise Exception('no suitable settings file. Please create one')
+		
+		log.log_level = int(settings['verbose'])
 
 		log.log('Settings loaded')
+
+		log.log('Initializing HUB...')
 
 		log.log('Initializing apps...')
 		if os.path.exists(work_dir) and os.path.isdir(work_dir):
@@ -95,18 +96,23 @@ def main():
 			log.log('Loaded', str(len(project_names)), 'apps:')
 			[print('APP #' + str(i + 1) + ': ' + project_names[i]) for i in range(len(project_names))]
 
-		log.log('Initializing icon stray...')
-
 		menu = tuple()
 		i = 0
+		running = settings['autoRunApps'] == 'True'
 		for project, project_class in project_class_dict.items():
-			menu += (icon_stray.SuperMenuItem(project, i, (icon_stray.SuperMenuItem('Running', i, pos = 0, function = project_class.run, state = True, radio = True), 
+			menu += (icon_stray.SuperMenuItem(project, i, (icon_stray.SuperMenuItem('Running', i, pos = 0, function = project_class.run, state = running, radio = True), 
 													icon_stray.SuperMenuItem('Paused', i, pos = 1, function = project_class.pause, radio = True),
-													icon_stray.SuperMenuItem('Stopped', i, pos = 2, function = project_class.stop, radio = True)), pos = 0, state = True),)
+													icon_stray.SuperMenuItem('Stopped', i, pos = 2, function = project_class.stop, state = not running, radio = True)), pos = 0, state = running),)
 			# Starting apps
-			project_class.start()
+			if running:
+				project_class.start()
 
 			i += 1
+
+		if running:
+			log.log('Autorunning apps...')
+
+		log.log('Initializing icon stray...')
 
 		stray = icon_stray.IconStray(menu, 'App Hub')
 
